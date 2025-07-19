@@ -48,9 +48,9 @@ function NodesPanel() {
     return (
         <div className="w-[30%] h-full bg-white border-r border-l border-gray-200 shadow-sm">
             <div className="h-full flex flex-col">
-                <div className="px-6 py-1.5 border-b border-gray-200 bg-gray-50">
+                <div className="px-6 py-1.5 border-b border-gray-200 bg-gray-0">
                     <h2 className="text-lg font-semibold text-gray-900">Components</h2>
-                    <p className="text-sm text-gray-600 mt">Drag components to canvas</p>
+                    <p className="text-sm text-gray-500 mt">Drag components to canvas</p>
                 </div>
 
                 <div className="flex-1 p-4 overflow-y-auto">

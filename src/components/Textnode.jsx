@@ -9,10 +9,10 @@ function Textnode({ data, id }) {
   }
   
   return (
-    <div className={`w-64 overflow-hidden bg-white border-2 rounded-lg shadow-sm ${
+    <div className={`w-64 overflow-hidden bg-white border-1 rounded-xl shadow-md ${
         data.selected 
           ? 'border-blue-400' 
-          : 'border-gray-300'
+          : 'border-gray-200'
       }`}>
       
       <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 border-b border-gray-200">
@@ -23,9 +23,9 @@ function Textnode({ data, id }) {
       <div className="p-3">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-600">Message</span>
-            <div className="w-2 h-2 bg-green-400 text-white rounded-full flex items-center justify-center text-xs font-medium">
-            </div>
+            <span className="text-xs text-gray-600 align-middle">Message</span>
+            {/* <div className="w-2 h-2  align-middle bg-green-400 mt-1 text-white rounded-full flex items-center justify-center text-xs font-medium">
+            </div> */}
           </div>
           <button 
             onClick={handleDelete}
@@ -52,12 +52,12 @@ function Textnode({ data, id }) {
       <Handle 
         type="source" 
         position={Position.Right}
-        className="!w-4 !h-4 !bg-gray-800 !border-2 !border-white shadow-md"
+        className="!w-3 !h-3 !bg-gray-600 !border-2 !border-white shadow-md"
       />
       <Handle 
         type="target" 
         position={Position.Left}
-        className="!w-4 !h-4 !bg-gray-800 !border-2 !border-white shadow-md"
+        className="!w-3 !h-3 !bg-gray-600 !border-2 !border-white shadow-md"
       />
     </div>
   )
