@@ -21,7 +21,7 @@ function App() {
   return (
     <DndProvider>
       <div className="flex w-screen h-screen">
-        <Canvas onNodeClick={onNodeClick} onPaneClick={onPaneClick} selectedNode={selectedNode} />
+        <Canvas onNodeClick={onNodeClick} onPaneClick={onPaneClick} selectedNode={selectedNode}/>
         {selectedNode?.id ? (
           <SettingsPanel selectedNode={selectedNode} setSelectedNode={setSelectedNode} />
         ) : (<NodesPanel />)}

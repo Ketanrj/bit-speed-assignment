@@ -10,13 +10,14 @@ import {
 } from '@xyflow/react';
 import { BackgroundVariant } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import CanvasHeader from './components/CanvasHeader'
 import Textnode from './components/Textnode';
 import CustomEdge from './components/CustomEdge';
 import { initialNodes, initialEdges } from './Workflow.constants';
 import { useDnD } from './DnDContext';
+import { getDocument } from './appwriteService'
 
 const nodeTypes = {
   Textupdater: Textnode,
@@ -27,20 +28,17 @@ const edgeTypes = {
 };
 
 function Canvas({ onNodeClick, onPaneClick, selectedNode }) {
-    const [nodes, setNodes, onNodesChange] = useNodesState(
-    initialNodes.map((node) => ({
-      ...node,
-      data: { ...node.data, selected: false },
-    }))
-  );
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, setViewport } = useReactFlow();
   const [type, setType] = useDnD();
+  const [headerData, setheaderData] = useState({});
 
   const onConnect = useCallback((connection) => {
-    const edge = { ...connection, id: nanoid(), type: 'myEdge' };
-    setEdges((prevEdges) => addEdge(edge, prevEdges));
-  }, [setEdges]);
+    const newEdge = { ...connection, id: nanoid(), type: 'myEdge' };
+    setEdges((prevEdges) => addEdge(newEdge, prevEdges))
+  }, []);
+
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
@@ -82,16 +80,40 @@ function Canvas({ onNodeClick, onPaneClick, selectedNode }) {
   }, [selectedNode, setNodes]);
 
   const isValidConnection = (connection) => {
-    const {source, target} = connection;
+    const { source, target } = connection;
 
     return source === target ? false : true;
   }
 
 
+  useEffect(() => {
+    const FlowData = async () => {
+      try {
+        const data = await getDocument();
+        setheaderData(JSON.parse(data.Flow));
+      } catch (err) {
+        console.error("Error fetching document:", err);
+      }
+    };
+    FlowData();
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(headerData).length > 0) {
+      const { nodes = [], edges = [], viewport = {} } = headerData;
+      const { x = 0, y = 0, zoom = 1 } = viewport;
+
+      setNodes(nodes);
+      setEdges(edges);
+      setViewport({ x, y, zoom }); // ✅ Correct usage: an object, not separate arguments
+    }
+  }, [headerData]);
+
+
+
   return (
-     <div className="flex-1 h-full bg-gray-50 relative">
+    <div className="flex-1 h-full bg-gray-50 relative ">
       <CanvasHeader nodes={nodes} edges={edges} />
-      <div className="h-full">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -114,15 +136,14 @@ function Canvas({ onNodeClick, onPaneClick, selectedNode }) {
             bgColor="#f8fafc"
             variant={BackgroundVariant.Dots}
           />
-          <Controls 
+          <Controls
             className="!bg-white !border-gray-200 !shadow-lg"
             showInteractive={false}
           />
-            <MiniMap
-            style={{width: 80, height: 80}}
-            />
+          <MiniMap
+            style={{ width: 80, height: 80 }}
+          />
         </ReactFlow>
-      </div>
     </div>
   );
 }

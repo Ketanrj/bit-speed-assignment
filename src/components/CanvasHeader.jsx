@@ -1,7 +1,14 @@
 import { Save, Eye, Play, MoreHorizontal } from 'lucide-react'
+import ThemeSwith from './ThemeSwith'
+import { createDatabase } from '../appwriteService'
+import { useState } from 'react';
+import { useReactFlow } from '@xyflow/react';
 
 
-function CanvasHeader({ nodes, edges }) {
+
+function CanvasHeader({ nodes, edges}) {
+
+  const [rfInstance, setrfInstance] = useState(useReactFlow())
 
   const handleSave = () => {
     const totalNodes = nodes.length;
@@ -11,25 +18,23 @@ function CanvasHeader({ nodes, edges }) {
       return !isTargeted;
     });
 
+
     if (totalNodes > 0 && nodesWithNoIncoming.length > 1) {
       alert('Error: More than one node has no incoming connection.');
       return;
     }
-
-    console.log('Flow is valid. Proceeding to save...');
+    if(rfInstance){
+      const Data = rfInstance.toObject();
+      const flowData = JSON.stringify(Data);
+      console.log(flowData);
+      createDatabase(flowData);
   };
-
-  const handlePreview = () => {
-    console.log('Preview flow...');
-  };
-
-  const handleRun = () => {
-    console.log('Run flow...');
-  };
+  setrfInstance(rfInstance);
+}
 
   return (
-    <div className="absolute top-0 left-0 right-0 py-0.5 z-50 bg-white border-b border-gray-200 ">
-      <div className="flex items-center justify-between px-6 py-3">
+    <div className="absolute top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 ">
+      <div className="flex items-center justify-between px-6  py-3 ">
         <div className="flex items-center gap-4">
           <h1 className="text-lg font-semibold text-gray-900">Flow Builder</h1>
           <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -43,6 +48,7 @@ function CanvasHeader({ nodes, edges }) {
         </div>
 
         <div className="flex items-center gap-2">
+          <ThemeSwith/>
           {/* <button 
             onClick={handlePreview}
             className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:border-gray-400 transition-colors"
@@ -57,19 +63,19 @@ function CanvasHeader({ nodes, edges }) {
           >
             <Play size={16} />
             Run
-          </button>
+          </button> */}
 
           <button 
             onClick={handleSave}
-            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded-md hover:bg-green-700 transition-colors"
+            className="inline-flex cursor-pointer items-center gap-2 px-3 py-2 text-sm shadow-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-none transition-colors text-shadow-xs hover:text-shadow-none"
           >
             <Save size={16} />
-            Save
-          </button> */}
-
+            <span className=''>Save</span>
+          </button>
+{/* 
           <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
             <MoreHorizontal size={16} />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
